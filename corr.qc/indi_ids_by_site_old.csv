@@ -1,0 +1,67 @@
+ID Range,Site / Release,Also In,Names,Dan Has?
+000001-001000,Baylor College of Medicine,,,
+001001-002000,Beijing: Eyes Open Eyes Closed Study,CoRR,,
+002001-003000,Beijing: Short TR Study,,,
+003001-004000,Berlin Mind and Brain Institute,CoRR,,
+004001-005000,Brain Imaging Research Center at UAMS,,,
+005001-006000,Duke University Medical Center,,,
+006001-007000,Harvard-MGH,,,
+007001-008000,Kennedy Krieger Institute,,,
+008001-009000,MPI-Leipzig,,,
+009001-010000,NKI/Rockland Sample,,,
+010001-011000,NYU Institute for Pediatric Neuroscience Sample,CoRR,,
+011001-012000,Stanford University,,,
+012001-013000,The Mind Research Network,,,
+013001-014000,University of Texas at Austin/UCLA,,,
+014001-015000,Valencia Spanish Resting State Network,,,
+015001-016000,WashU - Schlagger,,,
+016001-017000,PITT,,,
+017001-018000,Cleveland,,,
+018001-019000,Illinois,,,
+019001-019100,North Shore LIJ,,,
+020001-021000,Spain,,,
+021001-022000,NKI-2 (is this the TRT?),,,
+022001-023000,NEO,,,
+025000-025233,CORR (NYU CSC),,,Y
+025234-025334,CORR (PITT),,Pittsburg,Y
+025335-025361,CORR (Munich Daily Young Adults),,Daily Control,Y
+025362-025401,CORR (Munich Daily Aging),,Daily Aging,Y
+025402-025426,CORR (Munich Yearly),,Yearly,Y
+025427-025456,CORR (CCBDHNU Hangzhou Weng),,Hangzhou Weng,Y
+025457-025484,CORR (IACAS Beijing Jiang),,IACAS Jiang,Y
+025485-025514,CORR (IPCAS Beijing Fu),,IPCAS Fu,Y
+025515-025549,CORR (IPCAS Beijing Jiang),,IPCAS Jiang,Y
+025550-025585,CORR (IPCAS Beijing Liu Part 1),,IPCAS Liu Conflict Adaptation,Y
+025586-025598,CORR (IPCAS Beijing Zuo Part 1),,IPCAS Zuo Taichi,Y
+025599-025628,CORR (NGHNMC Nanjing Lu),,Nanjing Lu,Y
+025629-025863,CORR (PYSCHSWU Chongqing Qiu),,Chongqing Qiu,Y
+025864-025920,CORR (SKCNLBNU Beijing He),,SKCNLBNU He,Y
+025921-025981,CORR (SKCNLBNU Beijing Liu),,SKCNLBNU Liu,Y
+025982-026006,CORR (XWHCMU Beijing Li),,Beijing Li,Y
+026007-026016,CORR (Montreal Part 1),,Montreal 1,Y
+026017-026017,CORR (Utah Single),,"Utah Longitudinal, Utah Single",Y
+026018-026043,CORR (Utah Longitudinal),,"Utah Longitudinal, Utah Single",Y
+026044-026045,CORR (IPCAS Beijing Zuo Part 2),,IPCAS Zuo Three Day,Y
+026046-026119,CORR (IPCAS Beijing Zuo Part 3),,IPCAS Zuo Intra-Session,Y
+026120-026189,CORR (Montreal),,Montreal,Y
+026190-027009,CORR (IPCAS Beijing Liu Part 2),,IPCAS Liu Conflict Frame of Reference,Y
+027010-027054,CORR (MRN),,MRN,Y
+027055-027102,CORR (BEOEC),,BEOEC,Y
+027103-027151,CORR (NYU IPN),,NYU IPN,Y
+027152-027175,CORR (PSYCHSWU Chongqing Chen - Control),,Chongqing Chen Control,Y
+027176-027202,CORR (PSYCHSWU Chongqing Chen - Emotional),,Chongqing Chen Emotional,Y
+027203-027222,CORR (PSYCHSWU Chongqing Chen - Attentional Blink),,Chongqing Chen Attentional Blink,Y
+027223-027258,CORR (Virginia),,Virginia Tech,
+027259-027283,CORR (Wisconsin),,,
+027284-027305,CORR (IPCAS Beijing Wei),,,
+027306-027409,CORR (Darthmouth),,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+"40,000-41,000",Mike (MRN),,,
+"50,001-52,000",ABIDE,,,
+"100,000-199,999",NKI-RS Lite,,,
