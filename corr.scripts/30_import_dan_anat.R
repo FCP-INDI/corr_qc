@@ -70,17 +70,6 @@ cat("...removing", sum(!keep_inds), "subjects due to missing data", "\n")
 write.csv(df2[!keep_inds,], file="../corr.qc/bad_qc_filt_anat.csv")
 df3         <- df2[keep_inds,]
 
-# TODO: convert the site labels to abbreviated version!
-# TODO: add site, site.name (where site => site.name and then site => 1:nsites)
-tmp <- read.csv("../corr.qc/indi_ids_by_site.csv")
-
-levels(df3$site)
-to.use <- tmp$Current.Names != ""
-old.names <- as.character(tmp$Current.Names)[to.use]
-new.names <- as.character(tmp$CoRR.Plot.Label)[to.use]
-levels(df3$site)[!(levels(df3$site) %in% old.names)]
-old.names[!(old.names %in% levels(df3$site))]
-
 # Only include the subset of measures of interest
 df4         <- subset(df3, select=c("site", "site.name", "uniqueid", "subid", "session", "scan", qc.measures))
 

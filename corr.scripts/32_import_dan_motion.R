@@ -98,9 +98,6 @@ if (any(!keep_inds)) {
 }
 df3         <- df2[keep_inds,]
 
-# TODO: convert the site labels to abbreviated version!
-# TODO: add site, site.name (where site => site.name and then site => 1:nsites)
-
 # Only include the subset of measures of interest
 df4         <- subset(df3, select=c("site", "site.name", "uniqueid", "subid", "session", "scan", qc.measures))
 

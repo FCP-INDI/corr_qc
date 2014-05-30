@@ -1,9 +1,61 @@
 # This doesn't exactly import the raw spreadsheet, simply offers functions to do so
 
-read_all_anat <- function(df_file, exclude_file) {
+add_site_names <- function(df, site_info) {
+    info    <- site_info
+    isubjs  <- as.numeric(as.character(df$subid))
+    info    <- info[as.character(info$ID.Range) != "",]
+
+    #' I can loop through each subject id and see which ID.Range it is in (i.e., the row)
+    #' I might want to represent the ID Range differently?
+    #' let's then get the min and max
+    #+ min-max
+    id.ranges <- gsub(",", "", as.character(info$ID.Range))
+    id.ranges <- strsplit(id.ranges, "-")
+    id.ranges <- t(sapply(id.ranges, as.integer))
+    colnames(id.ranges) <- c("start", "end")
+
+    #' Now we create a vector that is as long as the maximum of the ID ranges
+    #' Then we assign each value in the vector to the row in the id.ranges,
+    #' this row number is basically our site ID.
+    vec.sites <- vector("integer", length=max(id.ranges))
+    for (i in 1:nrow(id.ranges)) {
+      inds    <- id.ranges[i,1]:id.ranges[i,2]
+      vec.sites[inds] <- i
+    }
+
+    #' Now what we want is to give each subject a site
+    #' note that these site numbers correspond to the row
+    #' in id.ranges and info.
+    isites    <- vec.sites[isubjs]
+
+    #' Weird that only Berlin Mind and Brain Institute isn't inside CORR
+    #' Should confirm that these ID-Range and Subject IDs match.
+    info[unique(isites),]
+
+    #' Site Names
+    #' This is temporary! Not sure now I am using a number.
+    site.names  <- as.character(info$CoRR.Plot.Label[isites])
+    usite.names <- unique(site.names)
+
+    head(isites)
+    head(site.names)
+
+    #df$site.org <- df$site
+    df$site <- isites
+    df$site.name <- site.names
+    
+    return(df)
+}
+
+read_all_anat <- function(df_file, exclude_file, site_info_file="../corr.qc/indi_ids_by_site.csv") {
   df <- read.csv(df_file)
   exclude_subs <- as.character(read.table(exclude_file)[,])
-  format_all_anat_df(df, exclude_subs)
+  df <- format_all_anat_df(df, exclude_subs)
+  
+  site_info <- read.csv(site_info_file)
+  df <- add_site_names(df, site_info)
+  
+  return(df)
 }
 
 format_all_anat_df <- function(df, exclude_subs=NULL) {
@@ -55,10 +107,15 @@ format_all_anat_df <- function(df, exclude_subs=NULL) {
   return(df)
 }
 
-read_all_rest <- function(df_file, exclude_file) {
+read_all_rest <- function(df_file, exclude_file, site_info_file="../corr.qc/indi_ids_by_site.csv") {
   df <- read.csv(df_file)
   exclude_subs <- as.character(read.table(exclude_file)[,])
-  format_all_rest_df(df, exclude_subs)
+  df <- format_all_rest_df(df, exclude_subs)
+  
+  site_info <- read.csv(site_info_file)
+  df <- add_site_names(df, site_info)
+  
+  return(df)
 }
 
 format_all_rest_df <- function(df, exclude_subs=NULL) {
@@ -110,3 +167,4 @@ format_all_rest_df <- function(df, exclude_subs=NULL) {
   
   return(df)
 }
+
