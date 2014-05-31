@@ -21,7 +21,7 @@ qc.measures <- c("MeanFD", "PercentFD_greater_than_0.20")
 #-------------
 
 # Paths
-in_qc_file  <- "../corr.qc/raw/epi_temporal/nsd_motion_4669.csv"
+in_qc_file  <- "../corr.qc/raw/epi_temporal/FINAL_func_qc.csv"
 #infiles     <- Sys.glob("../corr.qc/raw/epi_temporal/*_params.csv")
 in_raw_file <- "../corr.qc/allsites_rest_qc_ips.csv"
 in_exc_file <- "../corr.qc/allsites_rest_qc_exclude.txt"
@@ -83,7 +83,7 @@ df1         <- merge(info, qc7, by=c("subid", "session", "scan"), all.x=TRUE)
 # Restrict to only those scans where the raw data exists and is preprocessed
 df2         <- df1[df1$raw & df1$preprocessed, ]
 
-# Check if any derivatives are missing
+# Check if any measures are missing
 # and exclude (for now BUT WARN)
 all_bad_inds <- sapply(qc.measures, function(measure) {
   x         <- as.character(df2[[measure]])
@@ -108,15 +108,7 @@ for (measure in qc.measures) {
 }
 
 # Adjust site.name and number for NKI scans
-nki_inds    <- df5$site.name == "NKI"
-inds_s1     <- df5$scan[nki_inds] == 645
-inds_s2     <- df5$scan[nki_inds] == 1400
-inds_s3     <- df5$scan[nki_inds] == 2500
-site_names  <- as.character(df5$site.name)
-site_names[nki_inds][inds_s1] <- "NKI 1"
-site_names[nki_inds][inds_s2] <- "NKI 2"
-site_names[nki_inds][inds_s3] <- "NKI 3"
-df5$site.name<- factor(site_names)
+df5         <- add_nki_samples(df5)
 
 # Add on a 'global' site column, for any figure combining all the sites together
 df5$global   <- factor(rep("All Sites", nrow(df5)))

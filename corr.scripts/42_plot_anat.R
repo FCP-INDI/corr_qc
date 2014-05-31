@@ -153,13 +153,33 @@ df.range.iqr <- as.data.frame(sapply(qc.measures, function(m) {
 }))
 
 
+#' ## Visualization of Text
+#' A function with all the theme jazz
+#+ viz-text
+set_themes <- function(family="Times", text.size.x=14, text.size.y=16, title.size=18) {
+  family <- "sans"
+  pg <- list(
+    theme_bw(), 
+    theme(axis.title.x      = element_text(family = family, face = "plain", size=title.size)), 
+    theme(axis.title.y      = element_text(family = family, face = "plain", size=title.size, angle=90, vjust=0.25)), 
+    theme(axis.text.x       = element_text(family = family, face = "plain", size=text.size.x, vjust=0.5, angle=45)), 
+    theme(axis.text.y       = element_text(family = family, face = "plain", size=text.size.y, angle=90)), 
+    theme(axis.ticks.length = unit(.15, "lines")), 
+    theme(axis.ticks.margin = unit(.15,"lines")), 
+    theme(plot.margin       = unit(c(0.25, 1, 0.25, 1), "lines")), 
+    theme(legend.position   = "none")
+  )
+  return(pg)
+}
+
+
 #' ## QC Spatial/Anatomical Measures
 #' I will be plotting a bunch of different data-sets here. First I will have 
 #' all the data, then I will have it remote 3 x the IQR. So two sets of the
 #' same plots.
 #'
 #' ### REMOVE OUTLIERS
-#+ plot-qc-no-outliers, fig.width=15, fig.height=10
+#+ plot-qc-no-outliers, fig.width=12, fig.height=8, dpi=100
 for (i in 1:nrow(mdf)) {
   measure <- as.character(mdf$measure[i])
   desc <- as.character(mdf$description[i])
@@ -169,15 +189,7 @@ for (i in 1:nrow(mdf)) {
   pg1=ggplot(df, aes_string(x="site.name", y=measure))
   
   # Add those percentile lines
-  pg2=pg1 + compile_percentiles(percentiles, measure, qcols)
-  #pg2=pg1
-  #p <- percentiles[1,]
-  #pg2=pg2 + geom_hline(aes_string(yintercept=measure), data=p)
-  #p <- percentiles[2,]
-  #pg2=pg2 + geom_hline(aes_string(yintercept=measure), data=p)
-  #p <- percentiles[3,]
-  #pg2=pg2 + geom_hline(aes_string(yintercept=measure), data=p)
-  
+  pg2=pg1 + compile_percentiles(percentiles, measure, qcols)  
   
   # Add main plot
   # - violin plot + boxplot for all the data
@@ -191,48 +203,17 @@ for (i in 1:nrow(mdf)) {
     ylab(desc) +
     xlab("") 
   
-  # Add the y-range limit and the outlier points on the maximum of the range
-  # only if there are any outliers
+  # Add the y-range limit
   pg4=pg3
-  #if (nrow(lst.outlier.std[[measure]]) > 0) {
-  #  pg4=pg4 + 
-  #    geom_jitter(aes(x=site.name, y=new), 
-  #                data=lst.outlier.std[[measure]], 
-  #                position = position_jitter(width = .1), 
-  #                shape=8)
-  #}
   pg4=pg4 + 
     ylim(df.range.iqr[[measure]])
   
   # Below assumes that you are doing this with a default axis (sites on x, data on y)
-  pg5=pg4 + 
-    theme_bw() +
-    theme(axis.title.x      = element_text(family = "Times", face = "plain", size=12)) +
-    theme(axis.title.y      = element_text(family = "Times", face = "plain", size=12, angle=90)) +
-    theme(axis.text.x       = element_text(family = "Times", face = "plain", size=10, vjust=0.5, angle=45)) +
-    theme(axis.text.y       = element_text(family = "Times", face = "plain", size=10, angle=90)) +
-    theme(axis.ticks.length = unit(.15, "lines")) +
-    theme(axis.ticks.margin = unit(.15,"lines")) +
-    theme(plot.margin       = unit(c(0.25, 0.25,0.25,0.25), "lines"))+
-    theme(legend.position   = "none")
+  pg5=pg4 + set_themes()
+  
+  # Plot
   pg=pg5
   print(pg)
-  
-  #     # Let's now redo the previous plot but with the coordinates flipped
-  #     # This also requires changing up the angle of the x-axis
-  #     pg5=pg4 + 
-  #         theme_bw() +
-  #         theme(axis.title.x      = element_text(family = "Times", face = "plain", size=14)) +
-  #         theme(axis.title.y      = element_blank()) +
-  #         theme(axis.text.x       = element_text(family = "Times", face = "plain", size=12)) +
-  #         theme(axis.text.y       = element_text(family = "Times", face = "plain", size=12, angle=0)) +
-  #         theme(axis.ticks        = element_blank()) +
-  #         theme(plot.margin       = unit(c(0.25, 0.25,0.25,0.25), "lines")) +
-  #         theme(legend.position   = "none")
-  #     pg6=pg5 + 
-  #         coord_flip()
-  #     pg=pg6
-  #     print(pg)
   
   #ggsave("plot_option02.png", pg, height=2.5, width=5)    
   
@@ -242,7 +223,7 @@ for (i in 1:nrow(mdf)) {
 
 
 #' ### KEEP OUTLIERS
-#+ plot-qc-yes-outliers, fig.width=15, fig.height=10
+#+ plot-qc-yes-outliers, fig.width=12, fig.height=8, dpi=100
 for (i in 1:nrow(mdf)) {
   measure <- as.character(mdf$measure[i])
   desc <- as.character(mdf$description[i])
@@ -252,15 +233,7 @@ for (i in 1:nrow(mdf)) {
   pg1=ggplot(df, aes_string(x="site.name", y=measure))
   
   # Add those percentile lines
-  pg2=pg1 + compile_percentiles(percentiles, measure, qcols)
-  #pg2=pg1
-  #p <- percentiles[1,]
-  #pg2=pg2 + geom_hline(aes_string(yintercept=measure), data=p)
-  #p <- percentiles[2,]
-  #pg2=pg2 + geom_hline(aes_string(yintercept=measure), data=p)
-  #p <- percentiles[3,]
-  #pg2=pg2 + geom_hline(aes_string(yintercept=measure), data=p)
-  
+  pg2=pg1 + compile_percentiles(percentiles, measure, qcols)  
   
   # Add main plot
   # - violin plot + boxplot for all the data
@@ -272,56 +245,27 @@ for (i in 1:nrow(mdf)) {
     geom_jitter(aes(color=site.name), position = position_jitter(width = .1)) + 
     scale_color_manual(values=c(brewer.pal(4,"Dark2"), cmi_site_colors_ramp(nsites))) + 
     ylab(desc) +
-    xlab("") 
+    xlab("")
   
   # Add the y-range limit and the outlier points on the maximum of the range
   # only if there are any outliers
   pg4=pg3
-  #if (nrow(lst.outlier.std[[measure]]) > 0) {
-  #  pg4=pg4 + 
-  #    geom_jitter(aes(x=site.name, y=new), 
-  #                data=lst.outlier.std[[measure]], 
-  #                position = position_jitter(width = .1), 
-  #                shape=8)
-  #}
   #pg4=pg4 + 
   #  ylim(df.range.iqr[[measure]])
   
   # Below assumes that you are doing this with a default axis (sites on x, data on y)
-  pg5=pg4 + 
-    theme_bw() +
-    theme(axis.title.x      = element_text(family = "Times", face = "plain", size=12)) +
-    theme(axis.title.y      = element_text(family = "Times", face = "plain", size=12, angle=90)) +
-    theme(axis.text.x       = element_text(family = "Times", face = "plain", size=10, vjust=0.5, angle=45)) +
-    theme(axis.text.y       = element_text(family = "Times", face = "plain", size=10, angle=90)) +
-    theme(axis.ticks.length = unit(.15, "lines")) +
-    theme(axis.ticks.margin = unit(.15,"lines")) +
-    theme(plot.margin       = unit(c(0.25, 0.25,0.25,0.25), "lines"))+
-    theme(legend.position   = "none")
+  pg5=pg4 + set_themes()
+  
+  # Plot
   pg=pg5
   print(pg)
-  
-  #     # Let's now redo the previous plot but with the coordinates flipped
-  #     # This also requires changing up the angle of the x-axis
-  #     pg5=pg4 + 
-  #         theme_bw() +
-  #         theme(axis.title.x      = element_text(family = "Times", face = "plain", size=14)) +
-  #         theme(axis.title.y      = element_blank()) +
-  #         theme(axis.text.x       = element_text(family = "Times", face = "plain", size=12)) +
-  #         theme(axis.text.y       = element_text(family = "Times", face = "plain", size=12, angle=0)) +
-  #         theme(axis.ticks        = element_blank()) +
-  #         theme(plot.margin       = unit(c(0.25, 0.25,0.25,0.25), "lines")) +
-  #         theme(legend.position   = "none")
-  #     pg6=pg5 + 
-  #         coord_flip()
-  #     pg=pg6
-  #     print(pg)
   
   #ggsave("plot_option02.png", pg, height=2.5, width=5)    
   
   #readline("continue?")
   cat("\n\n\n\n")
 }
+
 
 
 

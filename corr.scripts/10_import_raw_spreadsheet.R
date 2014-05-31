@@ -47,6 +47,19 @@ add_site_names <- function(df, site_info) {
     return(df)
 }
 
+add_nki_samples <- function(df) {
+    nki_inds    <- df$site.name == "NKI"
+    inds_s1     <- df$scan[nki_inds] == 645
+    inds_s2     <- df$scan[nki_inds] == 1400
+    inds_s3     <- df$scan[nki_inds] == 2500
+    site_names  <- as.character(df$site.name)
+    site_names[nki_inds][inds_s1] <- "NKI 1"
+    site_names[nki_inds][inds_s2] <- "NKI 2"
+    site_names[nki_inds][inds_s3] <- "NKI 3"
+    df$site.name<- factor(site_names)
+    return(df)
+}
+
 read_all_anat <- function(df_file, exclude_file, site_info_file="../corr.qc/indi_ids_by_site.csv") {
   df <- read.csv(df_file)
   exclude_subs <- as.character(read.table(exclude_file)[,])

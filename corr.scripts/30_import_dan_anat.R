@@ -11,7 +11,7 @@
 
 source("10_import_raw_spreadsheet.R")
 
-in_qc_file  <- "../corr.qc/raw/anat_spatial/nsd_anat_2618.csv"
+in_qc_file  <- "../corr.qc/raw/anat_spatial/FINAL_anat_qc.csv"
 in_raw_file <- "../corr.qc/allsites_anat_qc_ips.csv"
 in_exc_file <- "../corr.qc/allsites_anat_qc_exclude.txt"
 
@@ -57,9 +57,9 @@ df1         <- merge(info, qc3, by=c("subid", "session", "scan"), all.x=TRUE)
 # Restrict to only those scans where the raw data exists and is not a symlink
 df2         <- df1[df1$raw & !df1$symlink, ]
 
-# Check if any derivatives are missing
+# Check if any measures are missing
 # and exclude (for now BUT WARN)
- all_bad_inds <- sapply(qc.measures, function(measure) {
+all_bad_inds <- sapply(qc.measures, function(measure) {
   x         <- as.character(df2[[measure]])
   bad_inds  <- is.na(x) | x == ""
   if (any(bad_inds)) cat(sprintf("%s has %i missing values\n", measure, sum(bad_inds)))
@@ -80,13 +80,10 @@ for (measure in qc.measures) {
 }
 
 # Adjust site.name and number for NKI scans
-nki_inds    <- df5$site.name == "NKI"
-site_names  <- as.character(df5$site.name)
-site_names[nki_inds] <- "NKI 1-3"
-df5$site.name<- factor(site_names)
+df5         <- add_nki_samples(df5)
 
 # Add on a 'global' site column, for any figure combining all the sites together
-df5$global   <- factor(rep("All Sites", nrow(df5)))
+df5$global  <- factor(rep("All Sites", nrow(df5)))
 
 # Save
 df <- df5

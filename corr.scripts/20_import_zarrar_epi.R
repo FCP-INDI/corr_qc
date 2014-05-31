@@ -37,9 +37,18 @@ df <- ddply(ss_info, .(session, scan), function(sdf) {
   qc_spat <- qc_spat[,-1]
   qc_temp <- qc_temp[,-1]
     
+  # Fix to subject column
+  qc_spat$subject <- sprintf("%07i", as.integer(as.character(qc_spat$subject)))
+  qc_temp$subject <- sprintf("%07i", as.integer(as.character(qc_temp$subject)))
+  
+  # Weird but due to an error on my part
+  # Remove any duplicate subject ids
+  qc_spat   <- qc_spat[!duplicated(qc_spat$subject),]
+  qc_temp   <- qc_temp[!duplicated(qc_temp$subject),]
+  
   # Merge the QC matrices
   # Then merge everything else together
-  qc      <- merge(qc_spat, qc_temp, by=c("subject", "session", "scan"))
+  qc      <- merge(qc_spat, qc_temp, by="subject")
   
   # Add the scan to these columns
   qc$session  <- session
@@ -55,12 +64,12 @@ df <- ddply(ss_info, .(session, scan), function(sdf) {
   
   # Let's filter for the columns of interest
   #print(colnames(df))
-  use.cols    <- c("uniqueid", "subid", "site", "session", "scan", "efc", "fber", "fwhm", "ghost_x", "ghost_y", "dvars", "quality")
+  use.cols    <- c("uniqueid", "subid", "site", "site.name", "session", "scan", "efc", "fber", "fwhm", "ghost_x", "ghost_y", "dvars", "quality")
   df          <- subset(df, select=use.cols)
   #head(df)
   
   # This will convert the columns that should be numeric to numeric
-  exclude.cols <- c("subid", "uniqueid", "site")
+  exclude.cols <- c("subid", "uniqueid", "site", "site.name")
   include.cols <- colnames(df)[!(colnames(df) %in% exclude.cols)]
   for (col in include.cols) {
     df[[col]] <- as.numeric(as.character(df[[col]]))
@@ -78,18 +87,11 @@ df <- ddply(ss_info, .(session, scan), function(sdf) {
   return(df)
 })
 
-# Remove extra NKI subject scans
-nki_subs    <- as.character(df$subject[df$scan == 645])
-inds        <- which(df$subject %in% nki_subs)
-rm_inds     <- inds[df$scan[inds]==1]
-df2         <- df[-rm_inds,]
-cat(sprintf("...removed %i nki subjects with duplicate scans\n", length(rm_inds)))
-
 # For now, use which side there is more ghosting on average
 # to determine phase encoding and which ghost direction to plot
 # TODO: double check any that are IS?
-df3         <- df2
-mg          <- ddply(df3, .(site), colwise(mean, .(ghost_x, ghost_y)))
+df2         <- df
+mg          <- ddply(df2, .(site), colwise(mean, .(ghost_x, ghost_y)))
 df3         <- ddply(df2, .(site), function(sdf) {
   comp    <- mean(sdf$ghost_x) > mean(sdf$ghost_y)
   if (comp) {
@@ -99,23 +101,12 @@ df3         <- ddply(df2, .(site), function(sdf) {
   }
   return(sdf)
 }, .progress="text")
-df3         <- subset(df3, select=c("subject", "site", "site.name", "session", "scan", qc.measures, "global"))
-
-# TODO: Add site and site.name (replace)
-# TODO: Then can do below
+df3         <- subset(df3, select=c("subid", "site", "site.name", "session", "scan", qc.measures, "global"))
 
 # Adjust site.name and number for NKI scans
-nki_inds    <- df3$site.name == "NKI"
-inds_s1     <- df3$scan[nki_inds] == 645
-inds_s2     <- df3$scan[nki_inds] == 1400
-inds_s3     <- df3$scan[nki_inds] == 2500
-site_names  <- as.character(df3$site.name)
-site_names[nki_inds][inds_s1] <- "NKI 1"
-site_names[nki_inds][inds_s2] <- "NKI 2"
-site_names[nki_inds][inds_s3] <- "NKI 3"
-df3$site.name<- factor(site_names)
+df4         <- add_nki_samples(df3)
 
 # Done
-df          <- df3
+df          <- df4
 write.csv(df, file="../corr.qc/qc_filt_epi.csv")
 
