@@ -57,6 +57,12 @@ cmi_site_colors_ramp = colorRampPalette(cmi_site_colors)
 df      <- read.csv("../corr.qc/qc_filt_epi_motion.csv")[,-1]
 nsites  <- length(unique(df$site))
 
+# Remove IPCAS 4 and IBATRT
+df2 <- subset(df, !(site.name %in% c("IPCAS 4", "IBATRT")))
+df2$site.name <- factor(df2$site.name)
+df <- df2
+
+
 #' ## Percentiles
 #'
 #' In our plots, we want to have percentile lines for each QC measure to 
@@ -146,8 +152,20 @@ names(lst.outlier.iqr) <- qc.measures
 # new ranges of our plots (sans outliers)
 df.range.iqr <- as.data.frame(sapply(qc.measures, function(m) {
     inds <- !outlier.iqr(df[[m]])
-    range(df[[m]][inds]) * 1.1 
+    range(df[[m]][inds]) * c(0.99,1.01) 
 }))
+
+#' Recompute the percentiles for plots without outliers
+#+ percentiles-outliers
+percentiles.no.outlier <- sapply(qc.measures, function(measure) {
+  bad_uids <- as.character(lst.outlier.iqr[[measure]]$uniqueid)
+  sub_df <- subset(df, !(uniqueid %in% bad_uids), select=measure, drop=T)
+  quantile(sub_df, qvals, na.rm=TRUE)
+})
+percentiles.no.outlier <- as.data.frame(cbind(percentiles.no.outlier, qcat, qline, qsize))
+percentiles.no.outlier$qline <- as.factor(qline)
+percentiles.no.outlier$qcat  <- as.factor(qcat)
+print(percentiles.no.outlier)
 
 
 #' ## Visualization of Text
@@ -186,7 +204,7 @@ for (i in 1:nrow(mdf)) {
   pg1=ggplot(df, aes_string(x="site.name", y=measure))
   
   # Add those percentile lines
-  pg2=pg1 + compile_percentiles(percentiles, measure, qcols)  
+  pg2=pg1 + compile_percentiles(percentiles.no.outlier, measure, qcols)  
   
   # Add main plot
   # - violin plot + boxplot for all the data

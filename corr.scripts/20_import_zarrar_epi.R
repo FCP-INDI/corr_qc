@@ -101,7 +101,7 @@ df3         <- ddply(df2, .(site), function(sdf) {
   }
   return(sdf)
 }, .progress="text")
-df3         <- subset(df3, select=c("subid", "site", "site.name", "session", "scan", qc.measures, "global"))
+df3         <- subset(df3, select=c("uniqueid", "subid", "site", "site.name", "session", "scan", qc.measures, "global"))
 
 # Adjust site.name and number for NKI scans
 df4         <- add_nki_samples(df3)
