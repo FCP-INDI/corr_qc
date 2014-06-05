@@ -180,8 +180,8 @@ set_themes <- function(family="Times", text.size.x=14, text.size.y=16, title.siz
     theme_bw(), 
     theme(axis.title.x      = element_text(family = family, face = "plain", size=title.size)), 
     theme(axis.title.y      = element_text(family = family, face = "plain", size=title.size, angle=90, vjust=0.25)), 
-    theme(axis.text.x       = element_text(family = family, face = "plain", size=text.size.x, vjust=0.5, angle=45)), 
-    theme(axis.text.y       = element_text(family = family, face = "plain", size=text.size.y, angle=90)), 
+    theme(axis.text.x       = element_text(family = family, face = "plain", size=text.size.x, vjust=0.95, hjust=1, angle=45)), 
+    theme(axis.text.y       = element_text(family = family, face = "plain", size=text.size.y, angle=90, hjust=0.5)), 
     theme(axis.ticks.length = unit(.15, "lines")), 
     theme(axis.ticks.margin = unit(.15,"lines")), 
     theme(plot.margin       = unit(c(0.25, 1, 0.25, 1), "lines")), 
@@ -225,7 +225,7 @@ for (i in 1:nrow(mdf)) {
   pg4=pg3
   pg4=pg4 + 
     ylim(df.range.iqr[[measure]])
-  
+    
   # Below assumes that you are doing this with a default axis (sites on x, data on y)
   pg5=pg4 + set_themes()
   
